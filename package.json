@@ -1,0 +1,28 @@
+{
+  "name": "my-evidence-project",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "evidence build",
+    "build:strict": "evidence build:strict",
+    "dev": "evidence dev --open /",
+    "test": "evidence build",
+    "preview": "cd build && http-server -p 9090"
+  },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=16.14.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "@evidence-dev/evidence": "15.0.1",
+    "@evidence-dev/preprocess": "2.2.0",
+    "@evidence-dev/components": "2.2.1",
+    "airtable": "0.11.6",
+    "http-server": "14.1.1"
+  },
+  "overrides": {
+    "jsonwebtoken": "9.0.0",
+    "trim@<0.0.3": ">0.0.3",
+    "sqlite3": "5.1.5"
+  }
+}
