@@ -6,17 +6,21 @@
     var base = new Airtable({apiKey: 'keyHqSGvALXEW5mvg'}).base('appF80Ib0QhiPrYxy');
 
 
-    let commentary = [];
+    let loaded_commentary = [];
+    let loaded_comment = undefined;
+    let submitted = false;
 
     let textAreaInput=''
   
   
     onMount(async () => {
-        commentary = await getCommentary()
+        loaded_commentary = await getCommentary()
+        loaded_comment = (loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start)[0] ?? 'unknown').commentary ?? undefined
     })
 
-    async function updateCommentary(){
-        commentary = await getCommentary()
+    async function updateDisplayedCommentary(){
+        loaded_commentary = await getCommentary()
+        loaded_comment = (loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start)[0] ?? 'unknown').commentary ?? undefined
     }
 
 async function getCommentary(){
@@ -42,9 +46,9 @@ async function addCommentary(input){
     base('Commentary').create([
         {
             "fields": {
-                "Date": week_start,
-                "Commentary": input,
-                "Section": section
+                "date": week_start,
+                "commentary": input,
+                "section": section
             }
         }
     ], 
@@ -53,20 +57,87 @@ async function addCommentary(input){
             console.error(err);
             return;
         }
-        updateCommentary()
+        submit()
+        updateDisplayedCommentary()
     });
 }
+}
+
+async function editCommentary(input, section, week_start){
+    base('Commentary').select({
+        maxRecords: 5,
+        view: "Grid view",
+        filterByFormula: `AND(DATESTR(date) = "` + week_start +`", section = "` + section + `")`
+    }).eachPage(function page(records, fetchNextPage) {
+        // This function (`page`) will get called for each page of records.
+    
+        records.forEach(function(record) {
+            console.log('Retrieved', record.getId());
+            if (input === '') {
+                base('Commentary').destroy(record.getId(), function(err, deletedRecord) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    console.log('Deleted record', deletedRecord.getId());
+                    submit()
+                    updateDisplayedCommentary()
+                });
+                return
+            } else {
+            base('Commentary').update([
+                {
+                    "id": record.getId(),
+                    "fields": {
+                        "commentary": input
+                    }
+                }
+            ],
+            function(err, records) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                console.log("updated " + record.getId())
+                submit()
+                updateDisplayedCommentary()
+            });
+        }
+            
+        });
+    
+    }, function done(err) {
+        if (err) { console.error(err); return; }
+    });
+}    
+
+function submit(){
+    submitted = true
+    setTimeout(() => {
+        submitted = false
+    }, 1000);
 }
 
 </script>
 
 
 
-{#if commentary.filter(d => d.Section === section).filter(d => d.Date === week_start).length > 0}
+{#if loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start).length > 0}
 
-{#each commentary.filter(d => d.Section === section).filter(d => d.Date === week_start) as comment}
+{#each loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start) as comment}
 
-<div class=commentary>{@html comment.Commentary}</div>
+
+<div class="editable commentary" contenteditable="true" bind:innerHTML={comment.commentary}/>
+
+
+
+{#if submitted}
+<button class=submitted>Saved</button>
+{:else}
+{#if comment.commentary !== loaded_comment}
+<button on:click={editCommentary(comment.commentary, section, week_start)}>Save</button>
+{/if}
+{/if}
 
 {/each}
 
@@ -79,10 +150,14 @@ async function addCommentary(input){
     placeholder="Add commentary here..."
 >{textAreaInput}</div>
 
-{#if textAreaInput !== '' && textAreaInput !== '<br>'}
-<button on:click={addCommentary(textAreaInput)}>Submit</button>
-{/if}
 
+{#if submitted}
+<button class=submitted>Saved</button>
+{:else}
+{#if textAreaInput !== '' && textAreaInput !== '<br>'}
+<button on:click={addCommentary(textAreaInput)}>Save</button>
+{/if}
+{/if}
 {/if}
 
 
@@ -98,6 +173,7 @@ async function addCommentary(input){
         padding: 5px;   
         width: 100%;
         resize: vertical;
+        border-left: 3px solid #ccc;
     }
 
     .editable:focus {
@@ -105,13 +181,19 @@ async function addCommentary(input){
     }
 
     button{
-            background-color: var(--blue-600);
+            background-color: var(--blue-500);
             color: white;
             font-weight: bold;
             border-radius: 4px;
-            border: 1px solid var(--blue-700);
+            border: 1px solid var(--blue-600);
             padding: 0.4em 1.10em;
             margin-top: 0.5em;
+            cursor: pointer;
+    }
+
+    button.submitted {
+        background-color: var(--green-600);
+        border: 1px solid var(--green-700);
     }
 
 

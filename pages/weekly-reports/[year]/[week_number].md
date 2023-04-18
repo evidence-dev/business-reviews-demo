@@ -1,6 +1,7 @@
 <script>
   let month = weeks_to_months_lookup.filter(d => d.week === $page.params.week_number).filter(d => d.year == $page.params.year)[0].month ?? 'unknown'
   let week_start = ((weeks_to_days_lookup.filter(d => d.week === $page.params.week_number).filter(d => d.year == $page.params.year)[0] ?? 'unknown').week_start ?? 'unknown').toString().slice(0,10)
+  let last_week_start = ((weeks_to_days_lookup.filter(d => d.week == (parseInt($page.params.week_number) - 1)).filter(d => d.year == $page.params.year)[0] ?? 'unknown').week_start ?? 'unknown').toString().slice(0,10)
   
   import CommentaryBlock from '$lib/CommentaryBlock.svelte';
 </script>
@@ -14,6 +15,13 @@ No data
 # Business Review - {$page.params.year} W{$page.params.week_number}
 
 Week commencing {week_start}.
+
+## Last Week's Actions
+
+<CommentaryBlock
+  section='Actions'
+  week_start={last_week_start}
+/>
 
 ## Summary
 
@@ -174,3 +182,10 @@ The total amount of cash at hand is $2,127,100, as of {week_start}.
 />
 
 {/if}
+
+# Actions
+
+<CommentaryBlock
+  section='Actions'
+  week_start={week_start}
+/>
