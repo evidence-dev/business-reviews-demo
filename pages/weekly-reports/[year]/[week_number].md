@@ -92,10 +92,6 @@ Sales for {month} to date are <Value data={orders_by_month.filter(d => d.month =
 {/each}
 </ul>
 
-<CommentaryBlock
-  section='Summary'
-  week_start={week_start}
-/>
 
 
 ### Last Week
@@ -126,7 +122,15 @@ Sales for {month} to date are <Value data={orders_by_month.filter(d => d.month =
 />
 
 
+<CommentaryBlock
+  section='Summary'
+  week_start={week_start}
+/>
+
+
+
 ## Marketing
+
 
 <CommentaryBlock
   section='Marketing'
@@ -135,6 +139,25 @@ Sales for {month} to date are <Value data={orders_by_month.filter(d => d.month =
 
 ## Ops
 
+```delivery_performance
+select
+  lpad(date_part('week', delivery_time),2,'0') as week,
+  date_part('year', delivery_time) as year,
+  case 
+    when delivery_time > delivery_slot_end then 'late'
+    when delivery_time < delivery_slot_start then 'early'
+    else 'on time' end as delivery_status,
+  count(id) as num_deliveries
+from deliveries
+group by 1,2,3
+```
+
+<DataTable data={delivery_performance.filter(d => d.week === $page.params.week_number).filter(d => d.year == $page.params.year)}>
+  <Column id="delivery_status"/>
+  <Column id="num_deliveries"/>
+</DataTable>
+
+
 <CommentaryBlock
   section='Ops'
   week_start={week_start}
@@ -142,6 +165,8 @@ Sales for {month} to date are <Value data={orders_by_month.filter(d => d.month =
 
 
 ## Finance
+
+The total amount of cash at hand is $2,127,100, as of {week_start}.
 
 <CommentaryBlock
   section='Finance'
