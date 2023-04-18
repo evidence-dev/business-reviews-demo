@@ -73,7 +73,7 @@ async function editCommentary(input, section, week_start){
     
         records.forEach(function(record) {
             console.log('Retrieved', record.getId());
-            if (input === '') {
+            if (input === '' || input === '<br>') {
                 base('Commentary').destroy(record.getId(), function(err, deletedRecord) {
                     if (err) {
                         console.error(err);
