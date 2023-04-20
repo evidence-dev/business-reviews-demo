@@ -3,8 +3,11 @@
     import Airtable from 'airtable'
     export let section = undefined;
     export let week_start = undefined;
-    var base = new Airtable({apiKey: 'keyHqSGvALXEW5mvg'}).base('appF80Ib0QhiPrYxy');
 
+    import { key } from '$lib/stores.js'
+    import { readOnly } from '$lib/stores.js'
+    
+    $: base = new Airtable({apiKey: $key}).base('appF80Ib0QhiPrYxy');
 
     let loaded_commentary = [];
     let loaded_comment = undefined;
@@ -107,7 +110,10 @@ async function editCommentary(input, section, week_start){
         });
     
     }, function done(err) {
-        if (err) { console.error(err); return; }
+        if (err) { 
+            console.error(err); 
+            return; 
+        }
     });
 }    
 
@@ -123,43 +129,41 @@ function submit(){
 
 
 {#if loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start).length > 0}
-
-{#each loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start) as comment}
-
-
-<div class="editable commentary" contenteditable="true" bind:innerHTML={comment.commentary}/>
-
-
-
-{#if submitted}
-<button class=submitted>Saved</button>
+    <!-- if there is existing commentary -->
+    {#each loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start) as comment}
+        <div 
+            class="editable commentary" 
+            contenteditable="true" 
+            bind:innerHTML={comment.commentary}
+        />
+        {#if submitted}
+        <button class=submitted>Saved</button>
+        {:else}
+            {#if comment.commentary !== loaded_comment}
+            <button on:click={editCommentary(comment.commentary, section, week_start)}>Save</button>
+                {#if $readOnly}<span class=error>Login to Save Edits</span>{/if}
+            {/if}
+        {/if}
+    {/each}
 {:else}
-{#if comment.commentary !== loaded_comment}
-<button on:click={editCommentary(comment.commentary, section, week_start)}>Save</button>
+    <!-- if there is no existing commentary -->
+    <div 
+        class="editable commentary"
+        contenteditable="true"
+        bind:innerHTML={textAreaInput}
+        placeholder="Add commentary here..."
+    >
+    {textAreaInput}
+    </div>
+    {#if submitted}
+        <button class=submitted>Saved</button>
+    {:else}
+        {#if textAreaInput !== '' && textAreaInput !== '<br>'}
+        <button on:click={addCommentary(textAreaInput)}>Save</button>
+            {#if $readOnly}<span class=error>Login to Save Edits</span>{/if}
+        {/if}
+    {/if}
 {/if}
-{/if}
-
-{/each}
-
-{:else}
-
-<div 
-    class="editable commentary"
-    contenteditable="true"
-    bind:innerHTML={textAreaInput}
-    placeholder="Add commentary here..."
->{textAreaInput}</div>
-
-
-{#if submitted}
-<button class=submitted>Saved</button>
-{:else}
-{#if textAreaInput !== '' && textAreaInput !== '<br>'}
-<button on:click={addCommentary(textAreaInput)}>Save</button>
-{/if}
-{/if}
-{/if}
-
 
 <style>
     .commentary {
@@ -196,5 +200,10 @@ function submit(){
         border: 1px solid var(--green-700);
     }
 
+    .error {
+        color: var(--red-500);
+        font-size: smaller;
+        margin: 0.5em
+    }
 
 </style>
