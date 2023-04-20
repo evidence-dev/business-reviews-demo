@@ -5,9 +5,13 @@
   
   import CommentaryBlock from '$lib/CommentaryBlock.svelte';
   import Login from '$lib/Login.svelte';
+  import WeekNav from '$lib/WeekNav.svelte';
 </script>
 
 <Login/>
+
+
+<WeekNav weekNumber={$page.params.week_number} year={$page.params.year}/>
 
 # Business Review - {$page.params.year} W{$page.params.week_number}
 
@@ -331,3 +335,6 @@ group by 1,2,3
   section='Actions'
   week_start={week_start}
 />
+
+
+<WeekNav weekNumber={$page.params.week_number} year={$page.params.year} />

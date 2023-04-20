@@ -191,7 +191,8 @@ function submit(){
             border-radius: 4px;
             border: 1px solid var(--blue-600);
             padding: 0.4em 1.10em;
-            margin-top: 0.5em;
+            margin-top: 1em;
+            margin-bottom: 1em;
             cursor: pointer;
     }
 
