@@ -42,7 +42,7 @@
 </script>
 
 <div class=card>
-<small><b>Mode:</b> {#if $readOnly} Read Only {:else} Editable {/if}</small>
+<small><b>Mode:</b> {#if $readOnly} Read Only {:else} Editable {/if}(<a href="/about">What's this?</a>)</small>
 <br>
 <input type="text" bind:value={input} placeholder="Password"/>
 
