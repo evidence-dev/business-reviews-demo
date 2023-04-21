@@ -1,9 +1,10 @@
 # Weekly Business Reviews
 
-This project demonstrates how to use Evidence to create content for a Weekly Business Review.
+This project demonstrates using Evidence to create content for a Weekly Business Review, it:
 
 1. **Automatically pre-populates a new report for each week**, using data from the database.
 1. **Allows business users to add commentary** to the report, to explain any unusual events or trends.
+1. **Can be shared via URL, PDF or copy-pasted** into another document.
 
 ```orders_by_week
 select 
