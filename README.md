@@ -1,25 +1,19 @@
-# Evidence Template Project
+# Weekly Business Reviews Demo
 
-Welcome to Evidence. Use this project template to get started.
+This project demonstrates using Evidence to create content for a Weekly Business Review, it:
 
-## Getting Started
+- **Automatically pre-populates a new report for each week**, using data from the database.
+- **Allows business users to add commentary** to the report, to explain any unusual events or trends.
+- **Can be shared via URL, PDF or copy-pasted** into another document.
 
-Check out the docs for [alternative install methods](https://docs.evidence.dev/getting-started/install-evidence) including Docker, Github Codespaces, and alongside dbt.
+## Commentary System
 
-```shell
-npx degit evidence-dev/template my-project
-cd my-project 
-npm install 
-npm run dev 
-```
+This project extends Evidence's core open source by adding the ability for end users to add commentary to reports.
+This functionality is provided via an AirTable, which stores the commentary and allows users to edit it.
 
-Once you've launched Evidence, this project includes a short tutorial to help you get started.
 
-Don't clone this repo, just download the code using the steps above.
+## Authentication
 
-## Learning More
-
-- [Docs](https://docs.evidence.dev/)
-- [Github](https://github.com/evidence-dev/evidence)
-- [Slack Community](https://join.slack.com/t/evidencedev/shared_invite/zt-uda6wp6a-hP6Qyz0LUOddwpXW5qG03Q)
-- [Evidence Home Page](https://www.evidence.dev)
+- You cannot save edits to the commentary unless you have the (secret) password.
+- In most organizational settings, this would be handled instead by user authentication, but for the purposes of this public demo, we're using a password.
+- Evidence offers authentication through Evidence Cloud, our hosted cloud service.
