@@ -126,8 +126,6 @@ function submit(){
 
 </script>
 
-
-
 {#if loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start).length > 0}
     <!-- if there is existing commentary -->
     {#each loaded_commentary.filter(d => d.section === section).filter(d => d.date === week_start) as comment}
